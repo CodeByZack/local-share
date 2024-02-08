@@ -8,7 +8,7 @@
     "build-server": "tsup server/index.ts",
     "build-fe": "vite build",
     "build": "tsc && npm run build-fe && npm run build-server",
-    "start": "node dist/index.cjs",
+    "start": "npm run build && node dist/index.cjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {

@@ -5,16 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc && vite build && tsup server/index.ts",
-    "start": "npm run build && node dist/index.cjs",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "build-server": "tsup server/index.ts",
+    "build-fe": "vite build",
+    "build": "tsc && npm run build-fe && npm run build-server",
+    "start": "node dist/index.cjs",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@arco-design/web-react": "^2.59.1",
     "express": "^4.18.2",
     "laser-utils": "^0.0.2",
     "less": "^4.2.0",
+    "pino": "^8.18.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "socket.io": "^4.7.4",

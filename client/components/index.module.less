@@ -28,13 +28,13 @@ body,
   }
 
   .boardCastIcon {
-    color: rgba(var(--arcoblue-6), 0.8);
+    color: rgba(22, 93, 255, 0.8);
     font-size: 60px;
     text-align: center;
   }
 
   .manualEntry {
-    color: rgba(var(--arcoblue-6), 0.8);
+    color: rgba(22, 93, 255, 0.8);
     cursor: pointer;
     margin-top: 5px;
     text-align: center;
@@ -46,7 +46,7 @@ body,
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
   animation-name: scale-in;
-  color: rgba(var(--arcoblue-6), 0.8);
+  color: rgba(22, 93, 255, 0.8);
   font-size: 20px;
   left: 0;
   position: fixed;
@@ -104,7 +104,7 @@ body,
 
     .icon {
       align-items: center;
-      background-color: rgba(var(--arcoblue-6), 0.8);
+      background-color: rgba(22, 93, 255, 0.8);
       border-radius: 70px;
       color: #fff;
       display: flex;
@@ -123,10 +123,6 @@ body,
 
 // === Modal ===
 .modal {
-  box-sizing: border-box;
-  max-height: 100%;
-  max-width: 96%;
-
   :global {
     .arco-modal-content {
       padding: 0;
@@ -137,7 +133,8 @@ body,
     align-items: center;
     display: flex;
     justify-content: center;
-
+    height: 48px;
+    border-bottom: 1px solid rgb(229, 230, 235);
     .dot {
       border-radius: 5px;
       height: 7px;
@@ -167,13 +164,13 @@ body,
         justify-content: flex-end;
 
         .messageContent {
-          background-color: rgba(var(--arcoblue-6), 0.8);
+          background-color: rgba(22, 93, 255, 0.8);
         }
       }
     }
 
     .messageContent {
-      background-color: rgba(var(--green-7), 0.8);
+      background-color: rgba(0, 154, 41, 0.8);
       border-radius: 10px;
       box-sizing: border-box;
       color: #fff;
@@ -251,9 +248,80 @@ body,
   }
 }
 
+.modalWrapper {
+  position: relative;
+  margin: 0 auto;
+  top: 0;
+  width: 520px;
+  border-radius: 4px;
+  border: 0 solid rgb(229, 230, 235);
+  background-color: #fff;
+  line-height: 1.5715;
+  text-align: left;
+  white-space: initial;
+  box-shadow: none;
+  box-sizing: border-box;
+  max-height: 100%;
+  max-width: 96%;
+}
+
 // === Misc ===
 .fileInput {
   left: -1000px;
   position: fixed;
   top: -1000px;
+}
+
+.icon {
+  display: inline-block;
+  color: inherit;
+  font-style: normal;
+  width: 1em;
+  height: 1em;
+}
+
+.crossIcon {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  font-size: 12px;
+  cursor: pointer;
+  color: rgb(29, 33, 41);
+}
+
+.footerInputWrapper {
+  outline: none;
+  appearance: none;
+  border-radius: 2px;
+  color: rgb(29, 33, 41);
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: color 0.1s cubic-bezier(0, 0, 1, 1),
+    border-color 0.1s cubic-bezier(0, 0, 1, 1),
+    background-color 0.1s cubic-bezier(0, 0, 1, 1);
+  border: 1px solid transparent;
+  background-color: rgb(242, 243, 245);
+  display: inline-flex;
+  width: 100%;
+  position: relative;
+  align-items: center;
+  margin-left: 10px;
+  .input {
+    line-height: 1.5715;
+    outline: none;
+    appearance: none;
+    width: 100%;
+    border-radius: 2px;
+    color: rgb(29, 33, 41);
+    padding: 4px 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: color 0.1s cubic-bezier(0, 0, 1, 1),
+      border-color 0.1s cubic-bezier(0, 0, 1, 1),
+      background-color 0.1s cubic-bezier(0, 0, 1, 1);
+    border: 1px solid transparent;
+    background-color: rgb(242, 243, 245);
+  }
 }

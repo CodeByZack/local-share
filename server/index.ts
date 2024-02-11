@@ -11,16 +11,6 @@ import {
 } from "../types/signaling";
 import { ERROR_TYPE, Member, ServerSocket } from "../types/server";
 import { getIpByRequest, getLocalIp } from "./utils";
-import pino from 'pino';
-const logger = pino();
-// import { readFileSync } from "fs";
-
-// const options = {
-//   key: readFileSync('fake-keys/privatekey.pem'),
-//   cert: readFileSync('fake-keys/certificate.pem')
-//   // key: fs.readFileSync('/etc/letsencrypt/live/webrtcweb.com/privkey.pem'),
-//   // cert: fs.readFileSync('/etc/letsencrypt/live/webrtcweb.com/fullchain.pem')
-// };
 
 const app = express();
 app.use(express.static("dist"));
@@ -38,7 +28,7 @@ io.on("connection", socket => {
     authenticate.set(socket, id);
     // 加入房间
     const ip = getIpByRequest(socket.request);
-    logger.info(`${ip} connect room`);
+    console.log(`${ip} connect room`);
     const room = rooms.get(ip) || [];
     rooms.set(ip, [...room, id]);
     mapper.set(id, { socket, device, ip });
@@ -108,7 +98,7 @@ io.on("connection", socket => {
     if (!instance) return void 0;
     const room = (rooms.get(instance.ip) || []).filter(key => key !== id);
     if (room.length === 0) {
-      logger.info(`${instance.ip} delete room`);
+      console.log(`${instance.ip} delete room`);
       rooms.delete(instance.ip);
     } else {
       rooms.set(instance.ip, room);

@@ -8,11 +8,8 @@ export const FILE_SOURCE: Map<string, Blob> = new Map();
 export const FILE_MAPPER: Map<string, ChunkType[]> = new Map();
 export const FILE_STATE: Map<string, FileType & { series: number }> = new Map();
 
-export const getMaxMessageSize = (
-  rtc: React.MutableRefObject<WebRTCApi | null>,
-  origin = false
-) => {
-  const instance = rtc.current?.getInstance();
+export const getMaxMessageSize = (rtc: WebRTCApi | null, origin = false) => {
+  const instance = rtc?.getInstance();
   const maxSize = instance?.connection.sctp?.maxMessageSize || 64 * 1024;
   if (origin) {
     return maxSize;
@@ -22,7 +19,7 @@ export const getMaxMessageSize = (
 };
 
 export const getNextChunk = (
-  instance: React.MutableRefObject<WebRTCApi | null>,
+  instance: WebRTCApi | null,
   id: string,
   series: number
 ) => {
@@ -31,7 +28,7 @@ export const getNextChunk = (
   if (!file) return new Blob([new ArrayBuffer(chunkSize)]);
   const start = series * chunkSize;
   const end = Math.min(start + chunkSize, file.size);
-  const idBlob = new Uint8Array(id.split("").map(char => char.charCodeAt(0)));
+  const idBlob = new Uint8Array(id.split("").map((char) => char.charCodeAt(0)));
   const seriesBlob = new Uint8Array(4);
   // `0xff = 1111 1111`
   seriesBlob[0] = (series >> 24) & 0xff;
@@ -43,21 +40,21 @@ export const getNextChunk = (
 
 let isSending = false;
 const QUEUE_TASK: ChunkType[] = [];
-const start = async (rtc: React.MutableRefObject<WebRTCApi | null>) => {
+const start = async (rtc: WebRTCApi | null) => {
   isSending = true;
   const chunkSize = getMaxMessageSize(rtc, true);
-  const instance = rtc.current?.getInstance();
+  const instance = rtc?.getInstance();
   const channel = instance?.channel;
   while (QUEUE_TASK.length) {
     const next = QUEUE_TASK.shift();
-    if (next && channel && rtc.current) {
+    if (next && channel && rtc) {
       if (channel.bufferedAmount >= chunkSize) {
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
           channel.onbufferedamountlow = () => resolve(0);
         });
       }
       const buffer = next instanceof Blob ? await next.arrayBuffer() : next;
-      buffer && rtc.current.send(buffer);
+      buffer && rtc.send(buffer);
     } else {
       break;
     }
@@ -65,7 +62,7 @@ const start = async (rtc: React.MutableRefObject<WebRTCApi | null>) => {
   isSending = false;
 };
 export const sendChunkMessage = async (
-  rtc: React.MutableRefObject<WebRTCApi | null>,
+  rtc: WebRTCApi | null,
   chunk: ChunkType
 ) => {
   QUEUE_TASK.push(chunk);
@@ -78,6 +75,7 @@ export const destructureChunk = async (chunk: ChunkType) => {
   const series = new Uint8Array(buffer.slice(ID_SIZE, ID_SIZE + CHUNK_SIZE));
   const data = chunk.slice(ID_SIZE + CHUNK_SIZE);
   const idString = String.fromCharCode(...id);
-  const seriesNumber = (series[0] << 24) | (series[1] << 16) | (series[2] << 8) | series[3];
+  const seriesNumber =
+    (series[0] << 24) | (series[1] << 16) | (series[2] << 8) | series[3];
   return { id: idString, series: seriesNumber, data };
 };

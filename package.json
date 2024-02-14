@@ -9,8 +9,7 @@
     "build-server": "tsup server/index.ts",
     "build-fe": "vite build",
     "build": "tsc && npm run build-fe && npm run build-server",
-    "start": "node dist/index.cjs",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "start": "node dist/index.cjs"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -31,7 +30,6 @@
     "tsup": "^8.0.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
-    "vite-bundle-analyzer": "^0.7.0",
-    "vite-plugin-pwa": "^0.18.1"
+    "vite-bundle-analyzer": "^0.7.0"
   }
 }

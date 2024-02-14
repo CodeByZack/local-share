@@ -4,7 +4,6 @@ import { appState, appendMsg, updateFileProgress } from "./store";
 import { showModal } from "./transfer-modal";
 import { CONNECTION_STATE, ChunkType } from "../types/client";
 import { SERVER_EVENT, ServerFn } from "../types/signaling";
-import { WebRTCApi } from "../types/webrtc";
 import {
   FILE_MAPPER,
   FILE_STATE,
@@ -49,7 +48,7 @@ const onLeftRoom: ServerFn<typeof SERVER_EVENT.LEFT_ROOM> = (event) => {
   const { id } = event;
   console.log("LEFT ROOM", id);
   if (id === appState.peerId.val) {
-    GLOBAL.webrtcHolder?.rtcInstance?.close();
+    GLOBAL.rtcInstance?.close();
     appState.closed.val = true;
     appState.peerId.val = "";
   }
@@ -94,7 +93,7 @@ const onConnectionStateChange = (pc: RTCPeerConnection) => {
 const onMessage = (event: MessageEvent<string | ChunkType>) => {
   console.log("onMessage", event);
 
-  const { rtcInstance } = GLOBAL.webrtcHolder!;
+  const { rtcInstance } = GLOBAL!;
 
   if (isString(event.data)) {
     // `String`
@@ -154,7 +153,6 @@ const onMessage = (event: MessageEvent<string | ChunkType>) => {
 };
 
 export const initWebRTC = (wssUrl?: string) => {
-  const holder: { webrtc?: WebRTC; rtcInstance?: WebRTCApi } = {};
   const webrtc = new WebRTC({ wss: wssUrl || location.href });
   webrtc.onOpen = onOpen;
   webrtc.onClose = onClose;
@@ -167,13 +165,7 @@ export const initWebRTC = (wssUrl?: string) => {
   webrtc.signaling.on(SERVER_EVENT.LEFT_ROOM, onLeftRoom);
   webrtc.signaling.on(SERVER_EVENT.FORWARD_OFFER, onReceiveOffer);
   webrtc.signaling.on(SERVER_EVENT.NOTIFY_ERROR, onNotifyError);
-  webrtc.onReady = ({ rtc }) => {
-    holder.rtcInstance = rtc;
-    appState.connectionState.val = CONNECTION_STATE.READY;
-  };
-  appState.localId.val = webrtc.id;
-  holder.webrtc = webrtc;
-  return holder;
+  return webrtc;
 };
 
 export const destroyWebRTC = (webrtc: WebRTC) => {

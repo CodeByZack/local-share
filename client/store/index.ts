@@ -17,8 +17,6 @@ export const appendMsg = (msg: TransferListItem) => {
 };
 
 export const updateFileProgress = (id: string, progress: number) => {
-  console.log(id);
-  console.log(progress);
   const newMsgList = [...appState.msgList.val];
   const last = newMsgList.find(
     (item) => item.type === "file" && item.id === id

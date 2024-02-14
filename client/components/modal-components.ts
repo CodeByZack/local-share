@@ -31,12 +31,12 @@ const closeModal = () => {
   peerId.val = "";
   msgList.val = [];
   connectionState.val = CONNECTION_STATE.READY;
-  const { rtcInstance } = GLOBAL.webrtcHolder!;
+  const { rtcInstance } = GLOBAL!;
   rtcInstance?.close();
 };
 
 const sendFilesBySlice = async (files: FileList) => {
-  const { rtcInstance } = GLOBAL.webrtcHolder!;
+  const { rtcInstance } = GLOBAL!;
   const maxChunkSize = getMaxMessageSize(rtcInstance!);
   for (const file of files) {
     const name = file.name;

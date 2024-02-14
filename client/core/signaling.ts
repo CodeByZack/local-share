@@ -45,6 +45,7 @@ export class SignalingServer {
     this.emit(CLINT_EVENT.JOIN_ROOM, {
       id: this.id,
       device: isMobile() ? DEVICE_TYPE.MOBILE : DEVICE_TYPE.PC,
+      room: location.hash,
     });
   };
 

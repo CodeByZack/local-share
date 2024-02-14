@@ -21,20 +21,29 @@ const authenticate = new WeakMap<ServerSocket, string>();
 const mapper = new Map<string, Member>();
 const rooms = new Map<string, string[]>();
 
-io.on("connection", socket => {
-  socket.on(CLINT_EVENT.JOIN_ROOM, ({ id, device }) => {
+const log = (msg: string) => {
+  console.log(`${new Date().toISOString()} ${msg}`);
+};
+
+io.on("connection", (socket) => {
+  socket.on(CLINT_EVENT.JOIN_ROOM, ({ id, device, room: customRoomName }) => {
     // 验证
     if (!id) return void 0;
     authenticate.set(socket, id);
     // 加入房间
-    const ip = getIpByRequest(socket.request);
-    console.log(`${ip} connect room`);
+    const ip = customRoomName || getIpByRequest(socket.request);
     const room = rooms.get(ip) || [];
+    if (room.length === 0) {
+      log(`created ${ip} room by ${id}/${device}`);
+    } else {
+      log(`${id}/${device} joined ${ip} room`);
+    }
     rooms.set(ip, [...room, id]);
     mapper.set(id, { socket, device, ip });
     // 房间通知消息
-    const initialization: SocketEventParams["JOINED_MEMBER"]["initialization"] = [];
-    room.forEach(key => {
+    const initialization: SocketEventParams["JOINED_MEMBER"]["initialization"] =
+      [];
+    room.forEach((key) => {
       const instance = mapper.get(key);
       if (!instance) return void 0;
       initialization.push({ id: key, device: instance.device });
@@ -76,7 +85,11 @@ io.on("connection", socket => {
     // 转发`Answer`
     const targetSocket = mapper.get(target)?.socket;
     if (targetSocket) {
-      targetSocket.emit(SERVER_EVENT.FORWARD_ANSWER, { origin, answer, target });
+      targetSocket.emit(SERVER_EVENT.FORWARD_ANSWER, {
+        origin,
+        answer,
+        target,
+      });
     }
   });
 
@@ -96,16 +109,17 @@ io.on("connection", socket => {
     // 退出房间
     const instance = mapper.get(id);
     if (!instance) return void 0;
-    const room = (rooms.get(instance.ip) || []).filter(key => key !== id);
+    const room = (rooms.get(instance.ip) || []).filter((key) => key !== id);
     if (room.length === 0) {
-      console.log(`${instance.ip} delete room`);
+      log(`destroy ${instance.ip} room by ${id}/${instance.device}`);
       rooms.delete(instance.ip);
     } else {
+      log(`${id}/${instance.device} leave ${instance.ip} room`);
       rooms.set(instance.ip, room);
     }
     mapper.delete(id);
     // 房间内通知
-    room.forEach(key => {
+    room.forEach((key) => {
       const instance = mapper.get(key);
       if (!instance) return void 0;
       instance.socket.emit(SERVER_EVENT.LEFT_ROOM, { id });
@@ -136,7 +150,7 @@ const PORT = Number(process.env.PORT) || 3000;
 httpServer.listen(PORT, () => {
   const ip = getLocalIp();
   console.log(`Listening on port http://localhost:${PORT} ...`);
-  ip.forEach(item => {
+  ip.forEach((item) => {
     console.log(`Listening on port http://${item}:${PORT} ...`);
   });
 });

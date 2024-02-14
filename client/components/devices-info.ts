@@ -11,7 +11,7 @@ const { devices } = appState;
 
 const connectPeer = (member: Member, e?: MouseEvent) => {
   e?.stopPropagation();
-  GLOBAL.webrtcHolder!.rtcInstance!.connect(member.id);
+  GLOBAL.rtcInstance!.connect(member.id);
   showModal();
   appState.peerId.val = member.id;
 };
@@ -29,7 +29,7 @@ const Device = (member: Member) => {
     },
     div(
       { class: styles.icon },
-      member.device === DEVICE_TYPE.MOBILE ? PhoneIcon : ComputerIcon
+      member.device === DEVICE_TYPE.MOBILE ? PhoneIcon() : ComputerIcon()
     ),
     div({ class: styles.name }, member.id)
   );

@@ -33,6 +33,7 @@ export interface SocketEventParams {
   [CLINT_EVENT.JOIN_ROOM]: {
     id: string;
     device: DEVICE_TYPE;
+    room?: string;
   };
   [CLINT_EVENT.LEAVE_ROOM]: {
     id: string;
